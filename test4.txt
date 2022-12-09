@@ -1,0 +1,8 @@
+YOINKR{
+(bruhhh = 88);
+
+loop{}
+*
+};
+
+SPLOINKY

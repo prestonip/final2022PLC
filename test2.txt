@@ -1,0 +1,9 @@
+YOINKY{
+
+loop(70 > 7 and 40 > 4 and 2 > 0 or 5 > 8 or 5 == 5){
+    righty_ = (3 * 4) + 8 * (3 + 3);
+};
+
+}
+
+SPLOINKY
