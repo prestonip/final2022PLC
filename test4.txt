@@ -1,8 +1,7 @@
-YOINKR{
-(bruhhh = 88);
+START 
+seventy;
+faction = 69;
+"banana"
+killer($balls);
+STOP
 
-loop{}
-*
-};
-
-SPLOINKY
