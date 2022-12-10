@@ -38,11 +38,6 @@ class Parser:
         self.curr_token = self.tokens[self.pos] if self.pos < len(self.tokens) else None
         return self.curr_token
 
-
-
-####################### FUNCTIONS ######################
-
-
     # S --> 'START' <stmt_list> 'STOP'
     def start(self):
         if self.curr_token.type == 'START':
