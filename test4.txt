@@ -1,7 +1,7 @@
 START 
-seventy;
-faction = 69;
-"banana"
-killer($balls);
-STOP
+number($param){
+    numbers = ((-7) * 8);
+    num_apples = 4;
+}
 
+STOP
