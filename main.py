@@ -8,9 +8,7 @@ class Compiler:
     f4 = open("test4.txt")
     # Change the file name below to test the different files
     text = f4.read()
-
     lex = lexer.Lexer(text)
-    
     result = lexer.run(text)
     print(result)
     parser = RDA.Parser(result)
