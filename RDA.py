@@ -1,24 +1,21 @@
 '''
 S --> 'START' <stmt_list> 'STOP'
 <stmt_list> --> <stmt>
-<stmt> --> <var_stmt> | <select_stmt> | <loop_stmt> | <block> | <function_definition>
-<var_stmt> --> ident { '=' { '-' } <expr> }
+<stmt> --> <var_stmt> | <func_def> | <select_stmt> | <loop_stmt> | <block>
+<var_stmt> --> ident { '=' { '-' } <expr> } | { <func_def> } ';'
+<func_def> --> ident '(' { param_dec } ')' <block>
 <select_stmt> -->  'if' '(' <bool_inc> ')' <block> [ 'else' <block> ]
 <loop_stmt> -->  'loop' '(' <bool_inc> ')' <block> 
 <func_def> --> function_call { param_dec }
 <block> --> '{' { <stmt> } '}'
-
-
 <expr> --> <term> { ('+'|'-') <term> }
 <term> --> <factor> { ('*'|'/'|'%') <factor> }
 <factor> --> ident | natural_lit | real_lit | bool_lit | char_lit | string_lit | function_call | '(' <expr> ')'
-
 <bool_inc> --> <bool_eval> { ('&'|'?'|'!') <bool_eval> }
 <bool_eval> --> <bool_expr> { ('>'|'<'|'>o='|'<o='|'=='|'!==') <bool_expr>}
 <bool_expr> --> <bool_term> { ('*'|'/'|'%') <bool_term> }
 <bool_term> --> <bool_factor> { ('+'|'-') <bool_factor> }
 <bool_factor> --> ident | real_lit | natural_lit | bool_lit | char_lit | string_lit | function_call
-
 '''
 
 
@@ -51,28 +48,31 @@ class Parser:
     # <stmt_list> --> <stmt>
     def stmt_list(self):
         while self.curr_token.type == 'ident' or self.curr_token.type == 'if_' or self.curr_token.type == 'loop' or self.curr_token.type == 'left_paren' or self.curr_token.type == 'function_call':
-            self.stmt()
+            self.stmt()#
 
 
-    # <stmt> --> <var_stmt> | <select_stmt> | <loop_stmt> | <block> | <function_definition>
+    # <stmt> --> <var_stmt> | <func_def> | <select_stmt> | <loop_stmt> | <block> 
     def stmt(self):
         match self.curr_token.type:
             case 'ident':       self.var_stmt()
             case 'if_':         self.select_stmt()
             case 'loop':        self.loop_stmt()
             case 'left_brack':  self.block()
-            case 'function_call': self.func_def()
             case _:             pass
 
-    # <func_def> --> function_call { param_dec }
+    # <func_def> --> ident '(' { param_dec } ')' <block>
     def func_def(self):
-        if self.curr_token.type == 'function_call':
+        if self.curr_token.type == 'left_paren':
             self.advance()
-            if self.curr_token.type == 'param_dec':
+            while self.curr_token.type == 'param_dec':
+                self.advance()
+                if self.curr_token.type == 'comma':
+                    self.advance()
+            if self.curr_token.type == 'right_paren':
                 self.advance()
                 self.block()
 
-    # <var_stmt> --> ident { '=' { '-' } <expr> }
+    # <var_stmt> --> ident { '=' { '-' } <expr> } | { <func_def> } ';'
     def var_stmt(self):
         while self.curr_token.type == 'ident':
             self.advance()
@@ -81,11 +81,18 @@ class Parser:
                 if self.curr_token.type == 'sub_op':
                     self.advance()
                     self.expr()
+                    if self.curr_token.type == 'semicolon':
+                        self.advance()
+                    else:
+                        self.syntaxError('stmt')
                 else:
                     self.expr()
-            else: pass
-            if self.curr_token.type == 'semicolon':
-                self.advance()
+                    if self.curr_token.type == 'semicolon':
+                        self.advance()
+                    else: 
+                        self.syntaxError('stmt')
+            elif self.curr_token.type == 'left_paren':
+                self.func_def()
             else:
                 self.syntaxError('stmt')
 
@@ -104,7 +111,7 @@ class Parser:
             self.advance()
             self.factor()
 
-    # <factor> --> ident | natural_lit | real_lit | bool_lit | char_lit | string_lit | function_call | '(' <expr> ')'
+    # <factor> --> ident | natural_lit | real_lit | bool_lit | char_lit | string_lit | '(' <expr> ')'
     def factor(self):
         if self.curr_token.type == 'ident' or self.curr_token.type == 'natural_literal' or self.curr_token.type == 'real_literal' or self.curr_token.type == 'bool_literal' or self.curr_token.type == 'char_literal' or self.curr_token.type == 'string_literal' or self.curr_token.type == 'function_call':
             self.advance()
@@ -201,7 +208,7 @@ class Parser:
         if self.curr_token.type == 'left_brack':
             self.advance()
             while self.curr_token.type == 'if_' or self.curr_token.type == 'loop' or self.curr_token.type == 'ident' or self.curr_token.type == 'left_brack' or self.curr_token.type == 'function_call':
-                self.stmt()
+                self.stmt_list()
             if self.curr_token.type == 'right_brack':
                 self.advance()
             else:

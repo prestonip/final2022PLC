@@ -172,33 +172,44 @@ class Lexer:
                 while self.curr_char != None and (self.curr_char.isalpha() or self.curr_char == "_"):
                     str_str += self.curr_char 
                     self.advance()
+
+
                 # (very janky function calling recognition ahead. please forgive the crusty nature of the following code. thank you.) 
                 # if we get a left paren after out chars...
-                if self.curr_char == "(":
-                    self.advance()
-                    # and the next char is a '$'...
-                    if self.curr_char == "$":
-                        self.advance()
-                        # look for param name
-                        if self.curr_char.isalpha() or self.curr_char == "_":
-                            str_str = ""
-                            while self.curr_char != None and (self.curr_char.isalpha() or self.curr_char == "_"):
-                                str_str += self.curr_char 
-                                self.advance()
-                            # once param name is typed, if we get right paren, and the param we just found isn't a keyword, output the function call, and the parameter...
-                            if self.curr_char == ')' and str_str != "try" and str_str != "catch" and str_str != "loop" and str_str != "word" and str_str != "num" and str_str != "char" and str_str != "frac" and str_str != "bool" and str_str != "true" and str_str != "cap" and str_str != "START" and str_str != "STOP":
-                                tokens.append(Token('function_call', function_call, None))
-                                tokens.append(Token('param_dec', param_dec, None))
-                                self.advance()
-                            else: return self.lexError("invalid function call")
-                        else: return self.lexError("invalid function call")
-                    # and if we get a right paren with no parameters inside, return just the function call
-                    elif self.curr_char == ")":
-                        tokens.append(Token('function_call', function_call, None))
-                        self.advance()
-                    else: return self.lexError("invalid function call")
+
+
+
+                # if self.curr_char == "(":
+                #     self.advance()
+                #     # and the next char is a '$'...
+                #     if self.curr_char == "$":
+                #         self.advance()
+                #         # look for param name
+                #         if self.curr_char.isalpha() or self.curr_char == "_":
+                #             str_str = ""
+                #             while self.curr_char != None and (self.curr_char.isalpha() or self.curr_char == "_"):
+                #                 str_str += self.curr_char 
+                #                 self.advance()
+                #             # once param name is typed, if we get right paren, and the param we just found isn't a keyword, output the function call, and the parameter...
+                #             if self.curr_char == ')' and str_str != "try" and str_str != "catch" and str_str != "loop" and str_str != "word" and str_str != "num" and str_str != "char" and str_str != "frac" and str_str != "bool" and str_str != "true" and str_str != "cap" and str_str != "START" and str_str != "STOP":
+                #                 tokens.append(Token('function_call', function_call, None))
+                #                 tokens.append(Token('param_dec', param_dec, None))
+                #                 self.advance()
+                #             else: return self.lexError("invalid function call")
+                #         else: return self.lexError("invalid function call")
+                #     # and if we get a right paren with no parameters inside, return just the function call
+                #     elif self.curr_char == ")":
+                #         tokens.append(Token('function_call', function_call, None))
+                #         self.advance()
+                #     else: return self.lexError("invalid function call")
+
+
+
                 # keywords for various stuff:
-                elif str_str == "try":        tokens.append(Token('if_', if_, None)) # selection
+
+
+                
+                if str_str == "try":        tokens.append(Token('if_', if_, None)) # selection
                 elif str_str == "catch":    tokens.append(Token('else_', else_, None)) # selection
                 elif str_str == "loop":     tokens.append(Token('loop', loop, None)) # loop
                 elif str_str == "word":     tokens.append(Token('string_keyword', string_keyword, None)) # strings
@@ -211,8 +222,9 @@ class Lexer:
                 elif str_str == "START":    tokens.append(Token('START', START, None))
                 elif str_str == "STOP":    tokens.append(Token('STOP', STOP, None))
                 # if it's none of any of that, its an variable identifier
-                else:                       
+                else:
                     tokens.append(Token('ident', ident, None))
+
 
             # not keywords or idents, not literals, so special characters.
             else:
@@ -276,6 +288,14 @@ class Lexer:
                     case ',': tokens.append(Token('comma', comma, None)), self.advance()
                     case '[': tokens.append(Token('left_brace', left_brace, None)), self.advance()
                     case ']': tokens.append(Token('right_brace', right_brace, None)), self.advance()
+                    case '$': 
+                        str_str += self.curr_char 
+                        self.advance()
+                        while self.curr_char != None and (self.curr_char.isalpha() or self.curr_char == "_"):
+                            str_str += self.curr_char 
+                            self.advance()
+                        tokens.append(Token('param_dec', param_dec, None))
+
                     case ' ': self.advance()
                     case '\t': self.advance()
                     case '\n': self.advance()
