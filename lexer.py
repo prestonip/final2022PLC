@@ -43,24 +43,18 @@ logical_or          = 29
 logical_not         = 30
 u_neg_op            = 31
 comma               = 32
-left_brace          = 33
-right_brace         = 34
-param_dec           = 35
+param_dec           = 33
 
 string_keyword = 40 #string keyword
-natural_keyword = 41 #natural keyword
-char_keyword = 42 # char keyword
+char_keyword = 41 # char keyword
+natural_keyword = 42 #natural keyword
 real_keyword = 43 #real keyword
 boolean_keyword = 44 #boolean keyword
-function_call = 45
-ident = 46
+ident = 45
 
 if_ = 50
 else_ = 51
 loop = 52
-
-nocap = 60
-cap = 61
 
 START = 100
 STOP = 99
@@ -96,6 +90,11 @@ class Lexer:
                     if self.curr_char == "/":
                         num += self.curr_char
                         self.advance()
+                        if self.curr_char.isnumeric():
+                            num += self.curr_char
+                            self.advance()
+                        else:
+                            return self.lexError('improper real structure')
                 # if our number has a division op, its a real
                 if '/' in num:
                     tokens.append(Token('real_literal', real_literal, num))
@@ -172,43 +171,7 @@ class Lexer:
                 while self.curr_char != None and (self.curr_char.isalpha() or self.curr_char == "_"):
                     str_str += self.curr_char 
                     self.advance()
-
-
-                # (very janky function calling recognition ahead. please forgive the crusty nature of the following code. thank you.) 
-                # if we get a left paren after out chars...
-
-
-
-                # if self.curr_char == "(":
-                #     self.advance()
-                #     # and the next char is a '$'...
-                #     if self.curr_char == "$":
-                #         self.advance()
-                #         # look for param name
-                #         if self.curr_char.isalpha() or self.curr_char == "_":
-                #             str_str = ""
-                #             while self.curr_char != None and (self.curr_char.isalpha() or self.curr_char == "_"):
-                #                 str_str += self.curr_char 
-                #                 self.advance()
-                #             # once param name is typed, if we get right paren, and the param we just found isn't a keyword, output the function call, and the parameter...
-                #             if self.curr_char == ')' and str_str != "try" and str_str != "catch" and str_str != "loop" and str_str != "word" and str_str != "num" and str_str != "char" and str_str != "frac" and str_str != "bool" and str_str != "true" and str_str != "cap" and str_str != "START" and str_str != "STOP":
-                #                 tokens.append(Token('function_call', function_call, None))
-                #                 tokens.append(Token('param_dec', param_dec, None))
-                #                 self.advance()
-                #             else: return self.lexError("invalid function call")
-                #         else: return self.lexError("invalid function call")
-                #     # and if we get a right paren with no parameters inside, return just the function call
-                #     elif self.curr_char == ")":
-                #         tokens.append(Token('function_call', function_call, None))
-                #         self.advance()
-                #     else: return self.lexError("invalid function call")
-
-
-
                 # keywords for various stuff:
-
-
-                
                 if str_str == "try":        tokens.append(Token('if_', if_, None)) # selection
                 elif str_str == "catch":    tokens.append(Token('else_', else_, None)) # selection
                 elif str_str == "loop":     tokens.append(Token('loop', loop, None)) # loop
@@ -221,7 +184,7 @@ class Lexer:
                 elif str_str == "cap":      tokens.append(Token('bool_literal', bool_literal, 'false')) # bool_lit false
                 elif str_str == "START":    tokens.append(Token('START', START, None))
                 elif str_str == "STOP":    tokens.append(Token('STOP', STOP, None))
-                # if it's none of any of that, its an variable identifier
+                # if it's none of any of that, its an variable identifier. The syntax analyzer determines whether the identifier is a proper function call or not
                 else:
                     tokens.append(Token('ident', ident, None))
 
@@ -237,12 +200,13 @@ class Lexer:
                     case '-': tokens.append(Token('sub_op', sub_op, None)), self.advance()
                     case '*': tokens.append(Token('mult_op', mult_op, None)), self.advance()
                     case '/': tokens.append(Token('div_op', div_op, None)), self.advance()
+                    case '%': tokens.append(Token('mod_op', mod_op, None)), self.advance()
                     case '^': tokens.append(Token('exp_op', exp_op, None)), self.advance()
                     case '(': tokens.append(Token('left_paren', left_paren, None)), self.advance()
                     case ')': tokens.append(Token('right_paren', right_paren, None)), self.advance()
                     case '>':
                         self.advance()
-                        if self.curr_char == '=':
+                        if self.curr_char == 'o':
                             self.advance()
                             if self.curr_char == '=':
                                 tokens.append(Token('greater_than_equal', greater_than_equal, None))
@@ -253,7 +217,7 @@ class Lexer:
                             tokens.append(Token('greater_than', greater_than, None))
                     case '<':
                         self.advance()
-                        if self.curr_char == '=':
+                        if self.curr_char == 'o':
                             self.advance()
                             if self.curr_char == '=':
                                 tokens.append(Token('less_than_equal', less_than_equal, None))
@@ -286,8 +250,6 @@ class Lexer:
                     case '{': tokens.append(Token('left_brack', left_brack, None)), self.advance()
                     case '}': tokens.append(Token('right_brack', right_brack, None)), self.advance()
                     case ',': tokens.append(Token('comma', comma, None)), self.advance()
-                    case '[': tokens.append(Token('left_brace', left_brace, None)), self.advance()
-                    case ']': tokens.append(Token('right_brace', right_brace, None)), self.advance()
                     case '$': 
                         str_str += self.curr_char 
                         self.advance()

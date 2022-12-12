@@ -1,17 +1,12 @@
-YOINKY{
+START
+{
 
-    heyjustw = 30_4 + 9;
+broheem = (420 % 196);
 
-    maybe(ondering <= ifyougot or thosepho == tosprint){
+    loop(ondering <o= ifyougot & thosepho == tosprint & smegma !== cheese){
+        #lol useless
+}
 
-    }
-    actually { 
-        edbogosb = bintedwh;
-    };
 
-    hatali;
-    hatali = 49_8;
-    enemoji;
-
-    }
-SPLOINKY
+}
+STOP

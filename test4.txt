@@ -1,7 +1,0 @@
-START 
-number($param){
-    numbers = ((-7) * 8);
-    num_apples = 4;
-}
-
-STOP

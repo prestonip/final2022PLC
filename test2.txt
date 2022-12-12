@@ -1,9 +1,33 @@
-YOINKY{
-
-loop(70 > 7 and 40 > 4 and 2 > 0 or 5 > 8 or 5 == 5){
-    righty_ = (3 * 4) + 8 * (3 + 3);
-};
-
+START 
+number($param, $param_two, $param_three, $param_four, $param_five, $param_six, $param_seven, $param_eight, $param_nine){
+    numbers = (((-7) * 8) % 9001);
+    num_apples(){
+        # this is a comment
+        # this comment spans multiple lines
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        #
+        # still a comment
+        #
+        #
+        #
+        #
+        #
+        try(70 >o= age){
+            death = "soon fr";
+        }
+        catch{
+            death = "later";
+        }
+    }
 }
 
-SPLOINKY
+STOP
