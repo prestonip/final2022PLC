@@ -1,3 +1,3 @@
-Preston Powell's submission files for PLC final 2022
+Complete and functional lexical and syntactical analyzers for a new programming language.
 
-P.S. subraction operator also acts as unary negation operator
+Rulebase and test files included.
